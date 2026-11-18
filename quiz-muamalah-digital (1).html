@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis Muamalah Digital</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f0f5ed;color:#183c2d}
+header{background:#174c38;color:white;text-align:center;padding:25px 15px}
+header h1{margin:0 0 8px}
+.container{max-width:650px;margin:30px auto;padding:25px;background:white;border-radius:18px;box-shadow:0 5px 20px #00000012}
+.progress{height:9px;background:#e2e9df;border-radius:10px;margin:15px 0 25px;overflow:hidden}
+#progressBar{height:100%;width:0%;background:#c6a34a;transition:.3s}
+.question-number{color:#b28c32;font-weight:bold}
+#question{font-size:21px;line-height:1.5}
+.option{display:block;width:100%;padding:14px;margin:12px 0;border:2px solid #dce7dc;border-radius:10px;background:white;text-align:left;font-size:15px;cursor:pointer;color:#183c2d;transition:.2s}
+.option:hover:not(:disabled){background:#edf5ee;border-color:#438365}
+.option:disabled{cursor:default}
+.correct{background:#d9f3df;border-color:#29934d}
+.wrong{background:#ffe0e0;border-color:#d9534f}
+#feedback{margin-top:18px;padding:13px;border-radius:10px;display:none;line-height:1.5}
+button.next,button.restart{width:100%;padding:14px;margin-top:20px;background:#174c38;color:white;border:0;border-radius:10px;font-size:16px;cursor:pointer}
+button.next:hover,button.restart:hover{background:#246c4e}
+button:disabled{opacity:.5;cursor:not-allowed}
+#result{display:none;text-align:center}
+.score{font-size:48px;color:#b28c32;font-weight:bold}
+footer{text-align:center;padding:20px;color:#718176;font-size:13px}
+@media(max-width:700px){.container{margin:18px 12px;padding:20px}#question{font-size:19px}}
+</style>
+</head>
+<body>
+<header>
+<h1>☪ Muamalah Digital</h1>
+<p>Uji Pemahamanmu tentang Etika Transaksi Islam</p>
+</header>
+<main class="container">
+<section id="quiz">
+<div class="question-number" id="number">Pertanyaan 1 dari 8</div>
+<div class="progress"><div id="progressBar"></div></div>
+<h2 id="question"></h2>
+<div id="options"></div>
+<div id="feedback"></div>
+<button class="next" id="nextBtn" onclick="nextQuestion()" disabled>Pertanyaan Berikutnya →</button>
+</section>
+<section id="result">
+<h2>Hasil Kuis</h2>
+<p>Alhamdulillah! Kamu telah menyelesaikan kuis.</p>
+<div class="score" id="score"></div>
+<h3 id="message"></h3>
+<p id="detail"></p>
+<button class="restart" onclick="restartQuiz()">Ulangi Kuis</button>
+</section>
+</main>
+<footer>© 2026 Muamalah Digital | Belajar Etika Transaksi Islam</footer>
+<script>
+const questions = [
+{question:"Apa yang dimaksud dengan muamalah?",options:["Hubungan manusia dengan lingkungan saja","Aturan hubungan antarmanusia dalam kehidupan sosial dan ekonomi","Kegiatan ibadah salat","Kegiatan membaca Al-Qur'an"],answer:1,explanation:"Muamalah mengatur hubungan antarmanusia, termasuk dalam kegiatan ekonomi dan transaksi."},
+{question:"Apa hukum asal kegiatan muamalah dalam Islam?",options:["Haram","Makruh","Mubah (boleh), selama tidak ada dalil yang melarang","Wajib semuanya"],answer:2,explanation:"Pada dasarnya muamalah diperbolehkan selama tidak melanggar ketentuan syariat."},
+{question:"Apa yang dimaksud dengan riba?",options:["Keuntungan dari jual beli yang sah","Tambahan yang dilarang dalam transaksi tertentu menurut syariat","Pemberian hadiah","Sedekah kepada orang lain"],answer:1,explanation:"Riba merupakan tambahan yang dilarang dalam transaksi tertentu menurut syariat Islam."},
+{question:"Mengapa penjual harus menjelaskan kondisi barang dengan jujur?",options:["Agar harga selalu mahal","Agar pembeli tidak bisa menawar","Agar transaksi berlangsung transparan dan tidak merugikan","Agar barang cepat habis"],answer:2,explanation:"Kejujuran merupakan prinsip penting dalam jual beli agar tidak ada pihak yang dirugikan."},
+{question:"Apa arti gharar dalam transaksi?",options:["Transaksi yang mengandung ketidakjelasan berlebihan","Transaksi tunai","Transaksi dengan harga murah","Transaksi dengan persetujuan kedua pihak"],answer:0,explanation:"Gharar adalah ketidakjelasan berlebihan dalam transaksi yang dapat menimbulkan perselisihan."},
+{question:"Contoh penerapan amanah dalam jual beli online adalah...",options:["Mengirim barang yang berbeda tanpa pemberitahuan","Menyembunyikan kerusakan produk","Mengirim barang sesuai deskripsi dan pesanan","Mengabaikan keluhan pembeli"],answer:2,explanation:"Amanah berarti bertanggung jawab dan memenuhi kesepakatan transaksi."},
+{question:"Apa yang harus dilakukan jika penjual mengetahui barangnya cacat?",options:["Menyembunyikan kondisi barang","Memberitahukan kondisi barang kepada pembeli","Mengubah foto produk","Tetap menjual tanpa penjelasan"],answer:1,explanation:"Penjual harus transparan mengenai kondisi barang agar pembeli dapat mengambil keputusan."},
+{question:"Apa tujuan utama menerapkan prinsip muamalah dalam transaksi?",options:["Mendapatkan keuntungan sebesar-besarnya dengan cara apa pun","Menghindari seluruh kegiatan perdagangan","Menciptakan transaksi yang adil, jujur, dan saling menguntungkan","Mengutamakan kepentingan penjual saja"],answer:2,explanation:"Muamalah bertujuan mewujudkan keadilan, kejujuran, dan kemaslahatan bagi semua pihak."}
+];
+let current=0,score=0,answered=false;
+function loadQuestion(){
+ answered=false;const q=questions[current];
+ document.getElementById("number").innerText=`Pertanyaan ${current+1} dari 8`;
+ document.getElementById("progressBar").style.width=`${current/8*100}%`;
+ document.getElementById("question").innerText=q.question;
+ const options=document.getElementById("options");options.innerHTML="";
+ document.getElementById("feedback").style.display="none";
+ q.options.forEach((option,index)=>{
+  const btn=document.createElement("button");btn.className="option";
+  btn.innerText=`${String.fromCharCode(65+index)}. ${option}`;
+  btn.onclick=()=>checkAnswer(index,btn);options.appendChild(btn);
+ });
+ const next=document.getElementById("nextBtn");next.disabled=true;
+ next.innerText=current===7?"Lihat Hasil":"Pertanyaan Berikutnya →";
+}
+function checkAnswer(selected,button){
+ if(answered)return;answered=true;const q=questions[current];
+ const buttons=document.querySelectorAll(".option"),feedback=document.getElementById("feedback");
+ buttons.forEach((btn,index)=>{btn.disabled=true;if(index===q.answer)btn.classList.add("correct")});
+ if(selected===q.answer){score++;feedback.style.background="#d9f3df";feedback.innerHTML="<b>Benar! ✓</b><br>"+q.explanation}
+ else{button.classList.add("wrong");feedback.style.background="#ffe0e0";feedback.innerHTML="<b>Belum tepat!</b><br>"+q.explanation}
+ feedback.style.display="block";document.getElementById("nextBtn").disabled=false;
+}
+function nextQuestion(){
+ if(!answered)return;current++;
+ if(current<questions.length)loadQuestion();else showResult();
+}
+function showResult(){
+ document.getElementById("quiz").style.display="none";
+ document.getElementById("result").style.display="block";
+ const percentage=score/8*100;
+ document.getElementById("score").innerText=`${score}/8`;
+ let message=percentage===100?"Luar biasa! Sempurna!":percentage>=75?"Hebat! Pemahamanmu sangat baik!":percentage>=50?"Bagus! Terus tingkatkan belajarmu!":"Tetap semangat! Ayo pelajari materinya lagi!";
+ document.getElementById("message").innerText=message;
+ document.getElementById("detail").innerText=`Nilai akhir: ${percentage}`;
+ document.getElementById("progressBar").style.width="100%";
+}
+function restartQuiz(){current=0;score=0;document.getElementById("quiz").style.display="block";document.getElementById("result").style.display="none";loadQuestion()}
+loadQuestion();
+</script>
+</body>
+</html>
