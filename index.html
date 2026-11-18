@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuis Muamalah Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html"><span class="brand-mark">م</span> Muamalah Digital</a>
+    <span class="top-label">Kuis Interaktif</span>
+  </header>
+
+  <main class="page">
+    <section class="intro" id="intro">
+      <p class="eyebrow">UJI PEMAHAMANMU</p>
+      <h1>Kuis Muamalah</h1>
+      <p class="lead">Jawab 8 pertanyaan seputar prinsip dan etika transaksi dalam Islam.</p>
+      <div class="info-row">
+        <span>8 Pertanyaan</span><span>•</span><span>Pilihan ganda</span><span>•</span><span>Skor otomatis</span>
+      </div>
+      <button class="primary-btn" id="startBtn">Mulai Kuis <span>→</span></button>
+    </section>
+
+    <section class="quiz-panel hidden" id="quizPanel" aria-live="polite">
+      <div class="quiz-meta">
+        <span id="questionCounter">Pertanyaan 1 dari 8</span>
+        <span id="progressPercent">13%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <h2 id="questionText"></h2>
+      <div class="options" id="options"></div>
+      <div class="feedback hidden" id="feedback"></div>
+      <button class="primary-btn hidden" id="nextBtn">Pertanyaan Berikutnya <span>→</span></button>
+    </section>
+
+    <section class="result-panel hidden" id="resultPanel">
+      <p class="eyebrow">KUIS SELESAI</p>
+      <h1>Hasil Kuis</h1>
+      <div class="score-circle"><strong id="score">0</strong><span>/ 8</span></div>
+      <h2 id="resultTitle"></h2>
+      <p class="lead" id="resultMessage"></p>
+      <button class="primary-btn" id="restartBtn">Ulangi Kuis <span>↻</span></button>
+      <a class="back-link" href="index.html">← Kembali ke Muamalah Digital</a>
+    </section>
+  </main>
+
+  <footer>Muamalah Digital · Belajar transaksi yang jujur dan amanah</footer>
+  <script src="script.js"></script>
+</body>
+</html>
